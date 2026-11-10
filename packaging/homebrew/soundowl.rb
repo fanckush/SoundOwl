@@ -9,7 +9,7 @@ cask "soundowl" do
 
   url "https://github.com/fanckush/SoundOwl/releases/download/v#{version}/SoundOwl-#{version}.zip"
   name "SoundOwl"
-  desc "Makes voice recordings clearer with an on-device speech restoration model"
+  desc "Restores muffled speech on device, live from apps and in recordings"
   homepage "https://fanckush.github.io/SoundOwl/"
 
   livecheck do
