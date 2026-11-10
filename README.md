@@ -28,6 +28,8 @@ Phone calls, old podcasts, voice memos, lectures, audiobooks ripped at low quali
 muffled, because the top half of the voice was thrown away somewhere along the line. SoundOwl
 rebuilds it.
 
+**Disclaimer**: Heavily done with AI
+
 SoundOwl lives in your menu bar. It's made for speech, not music.
 
 - **Calls.** Click the owl and switch on the app you call with (Zoom, Teams, a browser…). The
