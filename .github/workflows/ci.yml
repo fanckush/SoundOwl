@@ -28,7 +28,7 @@ jobs:
       - name: Show toolchain
         run: swift --version && xcodebuild -version
       - name: Cache SwiftPM
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .build
           # The module cache stores the absolute workspace path, which is derived from the
@@ -39,7 +39,7 @@ jobs:
       # The parity and session tests run the real model. The package is pinned in
       # ModelRelease.swift, so its hash is the cache key.
       - name: Cache model package
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: tools/model-export/build
           key: model-${{ hashFiles('Sources/SoundOwlCore/Models/ModelRelease.swift') }}
