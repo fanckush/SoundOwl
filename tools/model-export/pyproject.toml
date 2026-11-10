@@ -1,0 +1,23 @@
+[project]
+name = "soundowl-model-export"
+version = "0.1.0"
+description = "Developer-only tooling: export pinned LavaSR v2 weights to ONNX and produce reference outputs. Never shipped in the app."
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "torch==2.8.*",
+    "torchaudio==2.8.*",
+    "numpy<2.3",
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "einops>=0.8",
+    "huggingface_hub>=0.25",
+    "onnx>=1.17",
+    "onnxruntime>=1.20",
+    "onnxscript>=0.1",
+    "pyyaml>=6",
+    "vocos @ git+https://github.com/langtech-bsc/vocos.git@451e522f7a11c3652c9522f63ea6780736d93de0",
+    "LavaSR @ git+https://github.com/ysharma3501/LavaSR.git@33ac040892519c1bb4aed7eb32e79af51cc29e2a",
+]
+
+[tool.uv]
+package = false

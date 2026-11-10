@@ -1,0 +1,73 @@
+# Source of truth for SoundOwl.xcodeproj. After editing, run scripts/generate-project.sh
+# and commit both files, so the project opens in Xcode without XcodeGen installed.
+name: SoundOwl
+options:
+  bundleIdPrefix: app.soundowl
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    ARCHS: arm64
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+packages:
+  SoundOwlKit:
+    path: .
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    majorVersion: 2.10.0
+targets:
+  SoundOwl:
+    type: application
+    platform: macOS
+    sources:
+      - path: SoundOwl
+        excludes:
+          - CLI/soundowl
+      # The command line launcher: a script with no extension, so it has to be named as a resource.
+      - path: SoundOwl/CLI/soundowl
+        buildPhase: resources
+    dependencies:
+      - package: SoundOwlKit
+        product: SoundOwlCore
+      - package: SoundOwlKit
+        product: SoundOwlCLI
+      - package: SoundOwlKit
+        product: SoundOwlLive
+      - package: Sparkle
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.soundowl.SoundOwl
+        PRODUCT_NAME: SoundOwl
+        INFOPLIST_FILE: Config/SoundOwl-Info.plist
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: SoundOwl
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.music
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Free and open source under the Apache License 2.0."
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        # Local builds are ad-hoc signed, and an ad-hoc app under the hardened runtime refuses to
+        # load the embedded frameworks (no shared Team ID). scripts/build-release.sh turns the
+        # hardened runtime on together with the Developer ID identity.
+        ENABLE_HARDENED_RUNTIME: NO
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+        DEAD_CODE_STRIPPING: YES
+        COMBINE_HIDPI_IMAGES: YES
+schemes:
+  SoundOwl:
+    build:
+      targets:
+        SoundOwl: all
+    run:
+      config: Debug
+    archive:
+      config: Release

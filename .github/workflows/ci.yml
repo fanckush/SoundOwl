@@ -1,0 +1,163 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Files left out of the coverage number: build output, generated sources and the tests themselves.
+  COVERAGE_IGNORE: '/(\.build|DerivedData)/|Tests/'
+
+jobs:
+  package-tests:
+    name: Swift package tests
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+      - name: Show toolchain
+        run: swift --version && xcodebuild -version
+      - name: Cache SwiftPM
+        uses: actions/cache@v4
+        with:
+          path: .build
+          # The module cache stores the absolute workspace path, which is derived from the
+          # repository name. A cache from a differently named repo restores and then fails
+          # the build, so the name is part of the key and of the restore prefix.
+          key: spm-macos-26-${{ github.event.repository.name }}-${{ hashFiles('Package.swift', 'Package.resolved') }}
+          restore-keys: spm-macos-26-${{ github.event.repository.name }}-
+      # The parity and session tests run the real model. The package is pinned in
+      # ModelRelease.swift, so its hash is the cache key.
+      - name: Cache model package
+        uses: actions/cache@v4
+        with:
+          path: tools/model-export/build
+          key: model-${{ hashFiles('Sources/SoundOwlCore/Models/ModelRelease.swift') }}
+      - name: Fetch model package
+        run: scripts/fetch-model.sh --optional
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test --enable-code-coverage
+      - name: Parity against the PyTorch reference
+        if: hashFiles('tools/model-export/build/lavasr-v2/model.json') != ''
+        run: swift run -c release soundowl-dev parity
+      - name: Live keeps up in real time
+        if: hashFiles('tools/model-export/build/lavasr-v2/model.json') != ''
+        run: swift test -c release -Xswiftc -enable-testing --filter "LivePipelineTests|RingTests"
+      # The native build system makes one combined test bundle, swift-build makes one per
+      # test target, so every bundle is passed in.
+      - name: Export coverage as lcov
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          bin=$(swift build --show-bin-path)
+          objects=()
+          for bundle in "$bin"/*.xctest; do
+            objects+=(-object "$bundle/Contents/MacOS/$(basename "$bundle" .xctest)")
+          done
+          xcrun llvm-cov export -format=lcov -ignore-filename-regex="$COVERAGE_IGNORE" \
+            "${objects[@]}" -instr-profile "$bin/codecov/default.profdata" > package.lcov
+          grep -c '^SF:' package.lcov
+      - name: Upload package coverage
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-lcov
+          path: package.lcov
+          retention-days: 1
+
+  app-build:
+    name: App build (unsigned)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+      # The committed project must match project.yml, or someone edited one and not the other.
+      - name: Check the Xcode project is generated from project.yml
+        run: |
+          set -euo pipefail
+          brew install xcodegen
+          scripts/generate-project.sh
+          git diff --exit-code -- SoundOwl.xcodeproj
+      # Account-independent build: ad-hoc signing, no team.
+      - name: Build app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SoundOwl.xcodeproj \
+            -scheme SoundOwl \
+            -configuration Release \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath DerivedData \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+            build | xcbeautify
+        shell: bash
+
+  scripts:
+    name: Release script tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test next_version.py
+        run: python3 -m unittest discover -s scripts/tests
+
+  # Runs no repository code: it only turns the lcov file into the README badge.
+  coverage-badge:
+    name: Publish the coverage badge
+    needs: [package-tests]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # force-pushes the badges branch
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: package-lcov
+      - name: Push coverage.json to the badges branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          pct=$(awk -F'[:,]' '
+            /^SF:/ { file = substr($0, 4) }
+            /^DA:/ { key = file SUBSEP $2; if (!(key in hits) || $3 + 0 > hits[key]) hits[key] = $3 + 0 }
+            END { for (key in hits) { total++; if (hits[key] > 0) covered++ } printf "%.2f", 100 * covered / total }
+          ' package.lcov)
+          echo "Line coverage: $pct%"
+          mkdir badges
+          jq -n --argjson pct "$pct" '$pct | {
+            schemaVersion: 1,
+            label: "coverage",
+            message: "\(floor)%",
+            color: (if . >= 80 then "brightgreen" elif . >= 60 then "yellow" elif . >= 40 then "orange" else "red" end)
+          }' > badges/coverage.json
+          cd badges
+          git init -q -b badges
+          git add coverage.json
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "chore: update coverage badge"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" badges
+
+  lint:
+    name: Lint (non-blocking)
+    runs-on: macos-26
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: SwiftFormat and SwiftLint
+        run: ./scripts/lint.sh

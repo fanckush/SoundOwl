@@ -1,0 +1,13 @@
+# SwiftFormat configuration for SoundOwl.
+# The DSP code is dense on purpose: one-line guards and loops, unspaced ranges.
+--swiftversion 6.0
+--indent 4
+--maxwidth 130
+--ranges no-space
+--decimal-grouping 3,5
+--pattern-let inline
+--self remove
+--importgrouping testable-bottom
+--trailing-commas never
+--disable wrapMultilineStatementBraces,wrapIfStatementBodies,wrapPropertyBodies,wrapLoopBodies,wrapFunctionBodies,noForceUnwrapInTests,blankLinesBetweenScopes
+--exclude .build,DerivedData,build,tools

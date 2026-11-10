@@ -1,0 +1,28 @@
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+# Cancel superseded runs on the same pull request.
+concurrency:
+  group: pr-title-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Conventional title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|chore|perf)(\([^()]+\))?!?:[[:space:]]+[^[:space:]].*$ ]]; then
+            echo "PR titles must use feat:, fix:, docs:, chore:, or perf:."
+            echo "Optional scopes and breaking markers are supported, for example feat(menu)!: redesign controls."
+            exit 1
+          fi

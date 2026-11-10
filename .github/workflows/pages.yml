@@ -1,0 +1,58 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/pages.yml"
+  # Redeploy after a release so the version on the site stays current.
+  # workflow_run runs on main, which the github-pages environment allows.
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Before the first app release there is nothing to stamp; the page keeps its placeholder.
+      - name: Stamp latest release and date
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          today=$(date -u +%F)
+          if version=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq '.tagName | ltrimstr("v")' 2>/dev/null) \
+            && [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Stamping v$version, $today"
+            find site -name '*.html' -print0 | xargs -0 sed -i -E \
+              -e "s|(<span data-version>)v[^<]*(</span>)|\1v$version\2|g" \
+              -e "s|(\"softwareVersion\": \")[^\"]*\"|\1$version\"|g" \
+              -e "s|(\"dateModified\": \")[^\"]*\"|\1$today\"|g"
+          else
+            echo "No app release yet; not stamping a version."
+          fi
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "podcast",
+    "title": "Old podcast",
+    "detail": "Squeezed into a 24 kbps, 16 kHz AAC file.",
+    "seconds": 13.6
+  },
+  {
+    "id": "noisy",
+    "title": "Noisy room",
+    "detail": "Recorded at 16 kHz with fan noise and mains hum. Restored with Reduce background noise on.",
+    "seconds": 14.43
+  },
+  {
+    "id": "phone",
+    "title": "Phone call",
+    "detail": "Sent through an 8 kHz phone line.",
+    "seconds": 14.85
+  }
+]

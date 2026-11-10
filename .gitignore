@@ -1,0 +1,13 @@
+.DS_Store
+/.build/
+/build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.swiftpm/
+
+# Model export tooling: venv, downloaded upstream weights, built packages
+tools/model-export/.venv/
+tools/model-export/.cache/
+tools/model-export/build/
+__pycache__/

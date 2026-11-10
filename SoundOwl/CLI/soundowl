@@ -1,0 +1,7 @@
+#!/bin/sh
+# The SoundOwl command line: `soundowl restore recording.m4a`, `soundowl --help`.
+# It runs the app's own executable in command-line mode, with the same engine, model and settings.
+# Homebrew links it for you. To link it by hand:
+#   ln -s /Applications/SoundOwl.app/Contents/Resources/soundowl /usr/local/bin/soundowl
+here=$(dirname "$(realpath "$0")")
+exec "$here/../MacOS/SoundOwl" --cli "$@"

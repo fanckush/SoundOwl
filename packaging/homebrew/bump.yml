@@ -1,0 +1,37 @@
+# This workflow belongs in the TAP repo (fanckush/homebrew-soundowl) at
+# .github/workflows/bump.yml. The app repo's Release workflow dispatches it with
+# the new version + sha256, and it commits the updated Casks/soundowl.rb.
+# The cask is copied whole from packaging/homebrew/soundowl.rb at the release
+# tag, so edits there (like depends_on) reach the tap with the next release.
+name: Bump cask
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+      sha256:
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update cask
+        env:
+          V: ${{ github.event.inputs.version }}
+          SHA: ${{ github.event.inputs.sha256 }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -o Casks/soundowl.rb \
+            "https://raw.githubusercontent.com/fanckush/SoundOwl/v$V/packaging/homebrew/soundowl.rb"
+          sed -i -E "s/version \"[^\"]+\"/version \"$V\"/" Casks/soundowl.rb
+          sed -i -E "s/sha256 \"[^\"]+\"/sha256 \"$SHA\"/" Casks/soundowl.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "soundowl $V"
+          git push

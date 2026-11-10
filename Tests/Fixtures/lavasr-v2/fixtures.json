@@ -1,0 +1,22 @@
+{
+  "speech-16k": {
+    "cutoffHz": 8000,
+    "denoise": false
+  },
+  "phone-8k": {
+    "cutoffHz": 4000,
+    "denoise": false
+  },
+  "noisy-16k-denoise": {
+    "cutoffHz": 8000,
+    "denoise": true
+  },
+  "short": {
+    "cutoffHz": 8000,
+    "denoise": false
+  },
+  "silence": {
+    "cutoffHz": 8000,
+    "denoise": false
+  }
+}

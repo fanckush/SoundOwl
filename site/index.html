@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SoundOwl: make voices clear again</title>
+  <meta name="description" content="A free, open-source Mac app that restores muffled voices on your Mac: live in calls and videos, and in recordings. Phone calls, old podcasts, voice memos and lectures, made clear. No upload, no account.">
+  <link rel="canonical" href="https://fanckush.github.io/SoundOwl/">
+  <meta name="theme-color" content="#13203f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SoundOwl: make voices clear again">
+  <meta property="og:description" content="Free, open-source, on-device speech restoration for the Mac, live and for recordings. Hear the before and after.">
+  <meta property="og:url" content="https://fanckush.github.io/SoundOwl/">
+  <meta property="og:image" content="https://fanckush.github.io/SoundOwl/assets/icon-1024.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "SoundOwl",
+    "operatingSystem": "macOS 15 or later",
+    "applicationCategory": "MultimediaApplication",
+    "softwareVersion": "0.1.0",
+    "dateModified": "2026-10-30",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "downloadUrl": "https://github.com/fanckush/SoundOwl/releases/latest/download/SoundOwl.dmg",
+    "url": "https://fanckush.github.io/SoundOwl/"
+  }
+  </script>
+  <script src="player.js" defer></script>
+</head>
+<body>
+  <header class="night">
+    <nav class="bar">
+      <a class="brand" href="./">
+        <img src="assets/icon-64.png" alt="" width="32" height="32">
+        <span>SoundOwl</span>
+      </a>
+      <a class="quiet-link" href="https://github.com/fanckush/SoundOwl">Source on GitHub</a>
+    </nav>
+
+    <div class="hero">
+      <div class="pitch">
+        <img class="icon" src="assets/icon-512.png" alt="SoundOwl's icon: an owl under a crescent moon" width="112" height="112">
+        <h1>Make voices clear again.</h1>
+        <p class="lede">
+          Phone lines, cheap microphones and heavy compression throw away the top half of a
+          voice. SoundOwl rebuilds it on your Mac, live as you listen and in your recordings.
+        </p>
+        <div class="get">
+          <a class="download" href="https://github.com/fanckush/SoundOwl/releases/latest/download/SoundOwl.dmg">
+            Download for Mac
+          </a>
+          <div class="brew">
+            <code id="brew">brew install --cask fanckush/soundowl/soundowl</code>
+            <button type="button" class="copy" data-copy="brew" aria-label="Copy the Homebrew command">Copy</button>
+          </div>
+        </div>
+        <p class="fine">
+          Free and open source. Works offline. macOS 15 or later on Apple Silicon,
+          version <span data-version>v0.1.0</span>.
+        </p>
+      </div>
+
+      <figure class="player" id="player" aria-label="Before and after samples">
+        <div class="samples" role="tablist" aria-label="Sample"></div>
+
+        <div class="stage" id="stage" tabindex="0" role="slider" aria-label="Playback position"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00">
+          <img class="spec after" alt="" draggable="false">
+          <img class="spec before" alt="" draggable="false">
+          <div class="axis" aria-hidden="true">
+            <span style="bottom: 100%">24 kHz</span>
+            <span style="bottom: 66.67%">16 kHz</span>
+            <span style="bottom: 33.33%">8 kHz</span>
+          </div>
+          <div class="playhead" aria-hidden="true"></div>
+          <p class="which" aria-live="polite">Restored</p>
+        </div>
+
+        <div class="controls">
+          <button type="button" class="play" aria-label="Play">
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
+          </button>
+          <span class="time" aria-live="off">0:00</span>
+          <button type="button" class="hold">Hold to hear the original</button>
+        </div>
+
+        <figcaption>
+          <span class="detail"></span>
+          A public-domain <a href="https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll/">LibriVox</a>
+          reading of <i>Alice in Wonderland</i>, degraded on purpose, then restored by SoundOwl.
+          <span class="keys">On a keyboard, hold <kbd>Space</kbd>.</span>
+        </figcaption>
+        <noscript>
+          <p>Listen to the samples directly: the files are in
+            <a href="https://github.com/fanckush/SoundOwl/tree/main/site/samples">site/samples</a>.</p>
+        </noscript>
+      </figure>
+    </div>
+  </header>
+
+  <main class="paper">
+    <section class="using">
+      <div class="prose">
+        <h2>An owl in your menu bar.</h2>
+        <p>
+          Click it and everything SoundOwl does is right there. It's made for speech, and it
+          leaves everything else alone.
+        </p>
+      </div>
+      <div class="verbs">
+        <div>
+          <h3>Calls and videos</h3>
+          <p>
+            Switch on the app you call or watch with: Zoom, Teams, a browser. Voices are restored
+            as you hear them, about a fifth of a second behind. Music and sound that's already
+            clear play untouched. Headphones only, unless you say otherwise.
+          </p>
+        </div>
+        <div>
+          <h3>Clear copies</h3>
+          <p>
+            Drop recordings on the owl, or right-click them in Finder and choose
+            <em>Restore with SoundOwl</em>. Copies appear next to the originals with their title,
+            artist, album and artwork. A Shortcut and <code>soundowl restore</code> in Terminal do
+            the same.
+          </p>
+        </div>
+        <div>
+          <h3>Listening</h3>
+          <p>
+            Open a podcast, lecture or audiobook with SoundOwl and it plays restored right away,
+            even if it's ten hours long. Hold <kbd>Space</kbd> to hear the original, let go to
+            hear the difference. It remembers where you stopped.
+          </p>
+        </div>
+      </div>
+      <img class="shot" src="assets/screenshot.webp" width="1600" height="960" loading="lazy"
+           alt="The SoundOwl panel open under its owl in the menu bar, with QuickTime Player switched on and its options showing, next to the player window restoring a sample recording. The waveform is blue up to the playhead.">
+    </section>
+
+    <section class="how" id="how-it-works">
+      <div class="prose">
+        <h2>How it works</h2>
+        <p>
+          SoundOwl runs <a href="https://github.com/ysharma3501/LavaSR">LavaSR v2</a>, a
+          50 MB speech restoration model by Yatharth Sharma
+          (<a href="https://arxiv.org/abs/2603.07285">paper</a>). It looks at the part of the
+          voice that survived and predicts the frequencies that didn't, up to 48 kHz. The
+          optional noise reduction is <a href="https://github.com/Xiaobin-Rong/ul-unas">UL-UNAS</a>
+          by Xiaobin Rong and colleagues.
+        </p>
+        <p>
+          The model downloads once, the first time you open the app, and then everything happens
+          on your Mac. Your recordings are never uploaded. The models run in ONNX Runtime;
+          the signal processing around them is native Swift on Apple's Accelerate framework,
+          tested to match the reference implementation.
+        </p>
+        <p>
+          Long recordings are restored in 30-second pieces, starting from where you're listening,
+          so you never wait for the whole file before you can hear it.
+          Live works on the sound as it arrives, in small overlapping blocks, and Apple's
+          built-in sound classifier tells it when an app is playing music, so it steps aside.
+          <a href="https://github.com/fanckush/SoundOwl/blob/main/docs/engine.md">The engine notes</a>
+          have the details.
+        </p>
+      </div>
+
+      <dl class="facts">
+        <div><dt>Speed</dt><dd>About 140× realtime on an M5 Pro. An hour of speech in under 30 seconds.</dd></div>
+        <div><dt>With noise reduction</dt><dd>About 48× realtime.</dd></div>
+        <div><dt>Live</dt><dd>About 0.2 s behind the app. Faster or clearer per app.</dd></div>
+        <div><dt>Model download</dt><dd>52 MB, once. Credited and removable in Settings.</dd></div>
+        <div><dt>Formats</dt><dd>Opens MP3, M4A, AAC, WAV, AIFF and FLAC. Exports AAC, Apple Lossless or WAV.</dd></div>
+        <div><dt>Your audio</dt><dd>Stays on your Mac.</dd></div>
+      </dl>
+    </section>
+
+    <section class="open">
+      <h2>Free, and it stays that way</h2>
+      <p>
+        SoundOwl is open source under the Apache 2.0 license, the same license as the model it
+        runs. Read the code, file an issue, or send a pull request on
+        <a href="https://github.com/fanckush/SoundOwl">GitHub</a>. If it saves you an
+        afternoon, you can <a href="https://github.com/sponsors/fanckush">sponsor its
+        development</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>
+      SoundOwl by <a href="https://github.com/fanckush">fanckush</a>.
+      Model by Yatharth Sharma (LavaSR) and Xiaobin Rong et al. (UL-UNAS).
+      This site doesn't track you.
+    </p>
+  </footer>
+</body>
+</html>

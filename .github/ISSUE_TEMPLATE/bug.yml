@@ -1,0 +1,72 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! If a recording didn't come out well, a short clip of it (before and
+        after) helps more than anything else. Only share audio you're comfortable making public.
+        Security problems go through [private reporting](../security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Drop a recording on the window\n2. Turn on Reduce background noise\n3. ..."
+    validations:
+      required: true
+  - type: input
+    id: input-format
+    attributes:
+      label: The recording
+      description: Format, length and where it came from, if you know.
+      placeholder: "M4A, 42 minutes, Voice Memos on iPhone"
+  - type: textarea
+    id: sample
+    attributes:
+      label: Audio sample
+      description: Drag a short clip here (zip it if GitHub refuses the format), or link to one.
+  - type: input
+    id: version
+    attributes:
+      label: SoundOwl version
+      description: SoundOwl › About SoundOwl.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "macOS 26.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: chip
+    attributes:
+      label: Mac
+      options:
+        - M1 family
+        - M2 family
+        - M3 family
+        - M4 family
+        - M5 family
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installed from
+      options:
+        - DMG from the website or GitHub
+        - Homebrew
+        - Built from source
+    validations:
+      required: true
