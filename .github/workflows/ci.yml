@@ -22,7 +22,7 @@ jobs:
     name: Swift package tests
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Select latest Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
       - name: Show toolchain
@@ -81,7 +81,7 @@ jobs:
     name: App build (unsigned)
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Select latest Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
       - name: Install xcbeautify
@@ -111,7 +111,7 @@ jobs:
     name: Release script tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Test next_version.py
         run: python3 -m unittest discover -s scripts/tests
 
@@ -158,6 +158,6 @@ jobs:
     runs-on: macos-26
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: SwiftFormat and SwiftLint
         run: ./scripts/lint.sh
